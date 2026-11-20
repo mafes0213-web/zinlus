@@ -1,0 +1,434 @@
+/**
+ * ZINLUS - Estilos Visuales
+ * Estética minimalista, oscura y de suspenso psicológico.
+ */
+
+:root {
+    --bg-black: #000000;
+    --bg-dark-panel: rgba(8, 12, 18, 0.94);
+    --border-glow: rgba(100, 210, 255, 0.35);
+    --border-active: #64d2ff;
+    --text-primary: #ffffff;
+    --text-secondary: #9cb3c9;
+    --accent-cyan: #64d2ff;
+    --accent-glow: rgba(100, 210, 255, 0.5);
+    --accent-gold: #ffdf70;
+    --accent-purple: #d980fa;
+    --font-stack: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    user-select: none;
+    -webkit-user-select: none;
+}
+
+html, body {
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    background-color: var(--bg-black);
+    color: var(--text-primary);
+    font-family: var(--font-stack);
+}
+
+#canvas-container {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 1;
+}
+
+/* ==========================================
+   UI OVERLAYS
+   ========================================== */
+
+.ui-screen {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 10;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: radial-gradient(circle at center, rgba(3, 6, 12, 0.8) 0%, rgba(0, 0, 0, 0.96) 80%);
+    transition: opacity 0.4s ease, visibility 0.4s ease;
+}
+
+.ui-screen.hidden {
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+}
+
+.modal-card {
+    background: var(--bg-dark-panel);
+    border: 1px solid var(--border-glow);
+    border-radius: 8px;
+    padding: 40px 50px;
+    max-width: 680px;
+    width: 90%;
+    max-height: 90vh;
+    overflow-y: auto;
+    text-align: center;
+    box-shadow: 0 0 40px rgba(0, 0, 0, 0.9), 0 0 20px rgba(100, 210, 255, 0.12);
+    backdrop-filter: blur(8px);
+}
+
+/* Títulos con pulso luminoso */
+h1.title-logo {
+    font-size: 3.4rem;
+    font-weight: 300;
+    letter-spacing: 0.6em;
+    margin-right: -0.6em;
+    margin-bottom: 8px;
+    color: #ffffff;
+    text-shadow: 0 0 15px var(--accent-glow), 0 0 35px var(--border-glow);
+    animation: pulseTitle 4s infinite ease-in-out;
+}
+
+@keyframes pulseTitle {
+    0%, 100% { text-shadow: 0 0 12px var(--accent-glow); opacity: 0.95; }
+    50% { text-shadow: 0 0 28px rgba(100, 210, 255, 0.8), 0 0 45px rgba(100, 210, 255, 0.4); opacity: 1; }
+}
+
+.subtitle {
+    font-size: 0.85rem;
+    font-weight: 400;
+    letter-spacing: 0.25em;
+    color: var(--text-secondary);
+    text-transform: uppercase;
+    margin-bottom: 30px;
+}
+
+/* Badges de estado */
+.status-badge {
+    display: inline-block;
+    padding: 6px 14px;
+    font-size: 0.75rem;
+    letter-spacing: 0.1em;
+    border-radius: 20px;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    color: var(--text-secondary);
+    margin-bottom: 25px;
+}
+
+.status-badge.ready {
+    border-color: rgba(100, 210, 255, 0.6);
+    color: var(--accent-cyan);
+    background: rgba(100, 210, 255, 0.1);
+}
+
+.status-badge.disabled {
+    border-color: rgba(255, 100, 100, 0.4);
+    color: #ff8888;
+}
+
+/* ==========================================
+   BOTONES
+   ========================================== */
+
+.btn-group {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    margin-bottom: 30px;
+}
+
+.btn {
+    background: rgba(15, 24, 38, 0.8);
+    border: 1px solid var(--border-glow);
+    color: var(--text-primary);
+    padding: 14px 24px;
+    font-size: 0.9rem;
+    font-weight: 500;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: all 0.25s ease;
+    outline: none;
+}
+
+.btn:hover:not(:disabled) {
+    background: rgba(25, 45, 75, 0.95);
+    border-color: var(--border-active);
+    box-shadow: 0 0 15px var(--accent-glow);
+    transform: translateY(-1px);
+}
+
+.btn:active:not(:disabled) {
+    transform: translateY(0);
+}
+
+.btn.primary {
+    background: rgba(20, 48, 80, 0.85);
+    border-color: var(--accent-cyan);
+}
+
+.btn.primary:hover {
+    background: rgba(30, 75, 125, 0.95);
+}
+
+.btn.vr-btn {
+    border-color: rgba(217, 128, 250, 0.5);
+    background: rgba(35, 15, 45, 0.85);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+}
+
+.btn .btn-badge {
+    background: linear-gradient(135deg, #64d2ff, #9b51e0);
+    color: #ffffff;
+    font-size: 0.65rem;
+    font-weight: 700;
+    padding: 3px 8px;
+    border-radius: 3px;
+    letter-spacing: 0.1em;
+    text-shadow: 0 0 4px rgba(0, 0, 0, 0.8);
+    box-shadow: 0 0 8px rgba(100, 210, 255, 0.4);
+}
+
+.btn.vr-btn:hover:not(:disabled) {
+    border-color: var(--accent-purple);
+    box-shadow: 0 0 18px rgba(217, 128, 250, 0.5);
+    background: rgba(55, 20, 75, 0.95);
+}
+
+.btn:disabled, .btn.disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+    border-color: rgba(255, 255, 255, 0.1);
+}
+
+/* Selector de Niveles */
+.level-cards {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+    margin-bottom: 25px;
+}
+
+.btn-select-level {
+    background: rgba(10, 16, 26, 0.7);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    border-radius: 4px;
+    padding: 12px 8px;
+    color: var(--text-primary);
+    cursor: pointer;
+    text-align: center;
+    transition: all 0.2s ease;
+}
+
+.btn-select-level * {
+    pointer-events: none;
+}
+
+.btn-select-level .lvl-num {
+    display: block;
+    font-size: 0.7rem;
+    color: var(--accent-cyan);
+    letter-spacing: 0.15em;
+    margin-bottom: 4px;
+}
+
+.btn-select-level .lvl-name {
+    display: block;
+    font-size: 0.85rem;
+    font-weight: 600;
+    letter-spacing: 0.05em;
+    margin-bottom: 4px;
+}
+
+.btn-select-level .lvl-diff {
+    display: block;
+    font-size: 0.65rem;
+    color: var(--text-secondary);
+}
+
+.btn-select-level:hover {
+    border-color: var(--accent-cyan);
+    background: rgba(20, 35, 55, 0.85);
+    box-shadow: 0 0 10px rgba(100, 210, 255, 0.2);
+}
+
+/* ==========================================
+   SECCIÓN DE CONTROLES Y AJUSTES
+   ========================================== */
+
+.info-accordion {
+    text-align: left;
+    margin-top: 20px;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    padding-top: 15px;
+}
+
+.info-accordion summary {
+    font-size: 0.8rem;
+    color: var(--accent-cyan);
+    cursor: pointer;
+    letter-spacing: 0.1em;
+    margin-bottom: 12px;
+    outline: none;
+}
+
+.controls-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 15px;
+    font-size: 0.75rem;
+    color: var(--text-secondary);
+    line-height: 1.5;
+}
+
+.controls-col h4 {
+    color: #ffffff;
+    font-size: 0.8rem;
+    margin-bottom: 6px;
+    letter-spacing: 0.05em;
+}
+
+.controls-col ul {
+    list-style: none;
+}
+
+.controls-col li {
+    margin-bottom: 4px;
+}
+
+.controls-col kbd {
+    background: rgba(255, 255, 255, 0.15);
+    padding: 2px 6px;
+    border-radius: 3px;
+    color: #fff;
+    font-family: inherit;
+    font-size: 0.7rem;
+}
+
+/* Sliders de Sonido */
+.audio-settings-box {
+    margin-top: 15px;
+    padding: 12px;
+    background: rgba(0, 0, 0, 0.4);
+    border-radius: 4px;
+}
+
+.setting-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 0.75rem;
+    color: var(--text-secondary);
+    margin-bottom: 8px;
+}
+
+.setting-row input[type="range"] {
+    width: 140px;
+    accent-color: var(--accent-cyan);
+    cursor: pointer;
+}
+
+/* ==========================================
+   HUD EN JUEGO
+   ========================================== */
+
+#hud {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 5;
+    pointer-events: none;
+    transition: opacity 0.3s ease;
+}
+
+#hud.hidden {
+    opacity: 0;
+}
+
+.hud-top-left {
+    position: absolute;
+    top: 25px;
+    left: 30px;
+}
+
+.hud-level-badge {
+    font-size: 0.85rem;
+    font-weight: 600;
+    letter-spacing: 0.2em;
+    color: var(--accent-cyan);
+    text-transform: uppercase;
+    text-shadow: 0 0 10px rgba(100, 210, 255, 0.6);
+    margin-bottom: 4px;
+}
+
+.hud-objective-text {
+    font-size: 0.75rem;
+    letter-spacing: 0.08em;
+    color: rgba(255, 255, 255, 0.6);
+    max-width: 420px;
+    line-height: 1.4;
+}
+
+.hud-top-right {
+    position: absolute;
+    top: 25px;
+    right: 30px;
+    font-size: 0.75rem;
+    color: rgba(255, 255, 255, 0.4);
+    letter-spacing: 0.1em;
+}
+
+/* Retícula en pantalla */
+#crosshair {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 5px;
+    height: 5px;
+    border-radius: 50%;
+    background-color: rgba(255, 255, 255, 0.45);
+    transform: translate(-50%, -50%);
+    z-index: 6;
+    pointer-events: none;
+    transition: opacity 0.2s ease;
+}
+
+#crosshair.hidden {
+    opacity: 0;
+}
+
+/* Transiciones entre niveles */
+.screen-fade {
+    animation: fadeIn 0.5s ease;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: scale(0.98); }
+    to { opacity: 1; transform: scale(1); }
+}
+
+@media (max-width: 650px) {
+    .modal-card {
+        padding: 25px 20px;
+    }
+    h1.title-logo {
+        font-size: 2.4rem;
+    }
+    .level-cards {
+        grid-template-columns: 1fr;
+    }
+    .controls-grid {
+        grid-template-columns: 1fr;
+    }
+}

@@ -1,0 +1,24 @@
+{
+  "name": "zinlus",
+  "version": "1.0.0",
+  "description": "Videojuego de suspenso psicológico, exploración y percepción visual para PC y Meta Quest WebXR",
+  "type": "module",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "test": "node test_simulation.js",
+    "build": "node test_simulation.js"
+  },
+  "keywords": [
+    "zinlus",
+    "webxr",
+    "threejs",
+    "game",
+    "meta-quest",
+    "vr",
+    "horror",
+    "psychological-suspense"
+  ],
+  "author": "Antigravity Game Dev Team",
+  "license": "MIT"
+}

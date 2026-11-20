@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>ZINLUS - Videojuego de Suspenso Psicológico y Percepción Visual</title>
+    <meta name="description" content="Videojuego inmersivo 3D y WebXR en el vacío absoluto. Explora, reconoce patrones lumínicos y escapa de la oscuridad. Compatible con PC y Meta Quest 2.">
+    <link rel="stylesheet" href="css/style.css">
+    
+    <!-- Three.js r128 local -->
+    <script src="three.min.js"></script>
+    <script>
+        if (typeof THREE === 'undefined') {
+            console.warn('Three.js local no disponible, cargando respaldo...');
+            const script = document.createElement('script');
+            script.src = 'https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js';
+            document.head.appendChild(script);
+        }
+    </script>
+</head>
+<body>
+
+    <!-- Contenedor WebGL Three.js -->
+    <div id="canvas-container"></div>
+
+    <!-- Retícula central discreta para PC -->
+    <div id="crosshair" class="hidden"></div>
+
+    <!-- HUD en juego -->
+    <div id="hud" class="hidden">
+        <div class="hud-top-left">
+            <div id="hud-level-name" class="hud-level-badge">NIVEL 1: DESORIENTACIÓN</div>
+            <div id="hud-objective" class="hud-objective-text">Observa la reacción del entorno a tus pasos. Sigue las luces que despiertan ante ti.</div>
+        </div>
+        <div class="hud-top-right">
+            <span>[R] Reiniciar Nivel &nbsp;|&nbsp; [ESC] Pausa</span>
+        </div>
+    </div>
+
+    <!-- PANTALLA PRINCIPAL / MENÚ DE INICIO -->
+    <div id="main-menu" class="ui-screen">
+        <div class="modal-card screen-fade">
+            <h1 class="title-logo">ZINLUS</h1>
+            <p class="subtitle">Suspenso Psicológico & Percepción Visual</p>
+            
+            <div id="vr-status-badge" class="status-badge">
+                Comprobando compatibilidad WebXR...
+            </div>
+
+            <!-- Selección de Nivel -->
+            <div class="level-cards">
+                <button class="btn-select-level" data-level="1">
+                    <span class="lvl-num">NIVEL 1</span>
+                    <span class="lvl-name">DESORIENTACIÓN</span>
+                    <span class="lvl-diff">Dificultad: Media</span>
+                </button>
+                <button class="btn-select-level" data-level="2">
+                    <span class="lvl-num">NIVEL 2</span>
+                    <span class="lvl-name">CONFUSIÓN</span>
+                    <span class="lvl-diff">Dificultad: Alta</span>
+                </button>
+                <button class="btn-select-level" data-level="3">
+                    <span class="lvl-num">NIVEL 3</span>
+                    <span class="lvl-name">CAOS</span>
+                    <span class="lvl-diff">Dificultad: Muy Alta</span>
+                </button>
+            </div>
+
+            <!-- Botones de Acción -->
+            <div class="btn-group">
+                <button id="btn-vr-mode" class="btn vr-btn" data-action="start-vr" data-testid="start-here-btn" aria-label="Start Here - Modo Realidad Virtual Meta Quest">
+                    <span class="btn-badge">START HERE</span>
+                    <span>MODO REALIDAD VIRTUAL (META QUEST)</span>
+                </button>
+                <button id="btn-play" class="btn primary">
+                    JUGAR (COMPUTADOR)
+                </button>
+            </div>
+
+            <!-- Información de Controles y Audio -->
+            <details class="info-accordion">
+                <summary>CONTROLES Y GUÍA DE EXPLORACIÓN</summary>
+                <div class="controls-grid">
+                    <div class="controls-col">
+                        <h4>COMPUTADOR</h4>
+                        <ul>
+                            <li><kbd>W</kbd> <kbd>A</kbd> <kbd>S</kbd> <kbd>D</kbd> : Desplazarse</li>
+                            <li><kbd>Ratón</kbd> : Mirar en primera persona</li>
+                            <li><kbd>Shift</kbd> : Marcha rápida</li>
+                            <li><kbd>R</kbd> : Reiniciar nivel</li>
+                            <li><kbd>ESC</kbd> : Pausar / Menú</li>
+                            <li><kbd>F</kbd> : Pantalla completa</li>
+                        </ul>
+                    </div>
+                    <div class="controls-col">
+                        <h4>META QUEST 2 (VR)</h4>
+                        <ul>
+                            <li><kbd>Stick Izq</kbd> : Desplazamiento suave</li>
+                            <li><kbd>Stick Der</kbd> : Giro confortable</li>
+                            <li><kbd>Gatillo / A</kbd> : Seleccionar / Continuar</li>
+                            <li><kbd>Menú</kbd> : Pausar en VR</li>
+                            <li><kbd>Headset</kbd> : 6DOF Visión libre 360°</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="audio-settings-box">
+                    <div class="setting-row">
+                        <span>Volumen General</span>
+                        <input type="range" id="slider-master-volume" min="0" max="1" step="0.05" value="0.8">
+                    </div>
+                    <div class="setting-row">
+                        <span>Ambiente Sonoro</span>
+                        <input type="range" id="slider-ambient-volume" min="0" max="1" step="0.05" value="0.7">
+                    </div>
+                    <div class="setting-row">
+                        <span>Efectos / Luces</span>
+                        <input type="range" id="slider-sfx-volume" min="0" max="1" step="0.05" value="0.8">
+                    </div>
+                    <div style="margin-top: 10px; text-align: center;">
+                        <button id="btn-mute-toggle" class="btn" style="padding: 6px 16px; font-size: 0.75rem;">SONIDO: ACTIVADO</button>
+                    </div>
+                </div>
+            </details>
+        </div>
+    </div>
+
+    <!-- MENÚ DE PAUSA -->
+    <div id="pause-menu" class="ui-screen hidden">
+        <div class="modal-card screen-fade">
+            <h2 class="title-logo" style="font-size: 2.2rem; margin-bottom: 25px;">PAUSA</h2>
+            <div class="btn-group">
+                <button id="btn-resume" class="btn primary">REANUDAR</button>
+                <button id="btn-restart-level" class="btn">REINICIAR NIVEL</button>
+                <button id="btn-pause-main-menu" class="btn">SALIR AL MENÚ PRINCIPAL</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- PANTALLA DE NIVEL COMPLETADO -->
+    <div id="level-complete-menu" class="ui-screen hidden">
+        <div class="modal-card screen-fade">
+            <h2 id="complete-title" class="title-logo" style="font-size: 2.1rem; color: var(--accent-cyan);">NIVEL COMPLETADO</h2>
+            <p id="complete-desc" class="subtitle" style="margin-top: 15px; margin-bottom: 30px;">
+                Has descubierto la salida a través de la oscuridad.
+            </p>
+            <div class="btn-group">
+                <button id="btn-next-level" class="btn primary">CONTINUAR AL SIGUIENTE NIVEL</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- PANTALLA FINAL DE VICTORIA -->
+    <div id="victory-menu" class="ui-screen hidden">
+        <div class="modal-card screen-fade">
+            <h2 class="title-logo" style="font-size: 2.2rem; color: #aaffaa; text-shadow: 0 0 25px rgba(170, 255, 170, 0.6);">
+                HAS ESCAPADO DE ZINLUS
+            </h2>
+            <p class="subtitle" style="margin-top: 15px; margin-bottom: 25px; line-height: 1.6;">
+                Has vencido la desorientación, la confusión y el caos.<br>
+                Tu mente ha sabido distinguir la verdad entre el engaño de las sombras.
+            </p>
+            <div class="btn-group">
+                <button id="btn-replay-game" class="btn primary">VOLVER A JUGAR</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Entrada principal de la aplicación -->
+    <script type="module" src="js/main.js"></script>
+</body>
+</html>
